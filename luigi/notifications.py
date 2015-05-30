@@ -101,7 +101,11 @@ def send_email_smtp(config, sender, subject, message, recipients, image_png):
 
 def send_email_ses(config, sender, subject, message, recipients, image_png):
     import boto.ses
-    con = boto.ses.connect_to_region(config.get('email', 'region', 'us-east-1'),
+    from boto.regioninfo import RegionInfo
+
+    region = config.get('email', 'region', 'us-east-1')
+    region_url = config.get('email', 'region', 'email.us-east-1.amazonaws.com')
+    con = boto.ses.connect_to_region(region=RegionInfo(None, region, region_url),
                                      aws_access_key_id=config.get('email', 'AWS_ACCESS_KEY', None),
                                      aws_secret_access_key=config.get('email', 'AWS_SECRET_KEY', None))
     msg_root = generate_email(sender, subject, message, recipients, image_png)
